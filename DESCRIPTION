@@ -1,0 +1,24 @@
+Package: ZIMED
+Title: The effect decomposition of mediation analysis for zero-inflated models in microbiome data
+Version: 0.1
+Authors@R: 
+    person(given = "Tiantian",
+           family = "liu",
+           role = c("aut", "cre"),
+           email = "liu_double_tian@sjtu.edu.cn",
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: The effect decomposition of mediation analysis for zero-inflated models in microbiome data
+License: GPL (>= 2)
+Depends: R (>= 2.10)
+Imports: 
+    dplyr,
+    plyr,
+    readxl,
+    pscl
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.2
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
