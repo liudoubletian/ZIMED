@@ -18,7 +18,7 @@
 #' @examples
 #' Treat <- exposure
 #' Outcome <- Y_mat
-#' zimed.result <- zimed(M_mat,Treat,Outcome,method="joint",ci.method="delta")
+#' zimed.result <- zimed(M_mat=M_mat[,1:10],Treat,Outcome,method="joint",ci.method="delta")
 #' @export
 #' @import pscl
 
@@ -40,7 +40,7 @@ zimed <- function(M_mat,Treat,Outcome,method,ci.method){
   nb.res <-  try(glm.nb(Mediator ~ Treat, data = Y_data),silent=TRUE)
   scr.t <- try(overdisp_scoretest(OTU_table=Y_data$Mediator,group=Y_data$Treat), silent = TRUE)
   if(sum(Y_data$Mediator==0)==0){
-    if(inherits(b,"error")){wald.p[j]<-NA}
+    if(inherits(nb.res,"error")){wald.p[j]<-NA}
     else{
       wald.p[j] <- summary(nb.res)$coefficients[2,4]
     }
@@ -49,7 +49,7 @@ zimed <- function(M_mat,Treat,Outcome,method,ci.method){
     scr.t <- try(overdisp_scoretest(OTU_table=Y_data$Mediator,group=Y_data$Treat), silent = TRUE)
     if(scr.t <= 0.05){
       zinb.res <-  try(zeroinfl(Mediator ~ Treat | Treat, data = Y_data,dist = c("negbin"),link = c("logit")), silent = TRUE)
-      if(inherits(d, "try-error")){
+      if(inherits(zinb.res, "try-error")){
         wald.p[j] <- NA
       }
       else{
@@ -105,6 +105,8 @@ zimed <- function(M_mat,Treat,Outcome,method,ci.method){
 
   id.test <- which(final.p<0.05)
 
+  if(length(id.test)==0){print("No significant mediators")}
+  else{
   for(j in 1:length(id.test)){
     Y_data <- as.data.frame(cbind(Treat,M_mat[,id.test[j]],Outcome))
     colnames(Y_data) <- c("Treat", "Mediator", "Outcom")
@@ -255,6 +257,8 @@ zimed <- function(M_mat,Treat,Outcome,method,ci.method){
 
 
   }
+
   results <- list(NIE=nie,NIE.p =nie.p, NIE.ci=nie.ci,NIEA=niea,NIEA.p =niea.p,NIEA.ci=niea.ci,NIEP=niep,NIEP.p =niep.p,NIEP.ci=niep.ci,)
   return(results)
+  }
 }
